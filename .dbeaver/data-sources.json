@@ -1,0 +1,35 @@
+{
+	"folders": {},
+	"connections": {
+		"mariaDB-18d0ff2d391-4745ad8bced04c62": {
+			"provider": "mysql",
+			"driver": "mariaDB",
+			"name": "test_minwook",
+			"save-password": true,
+			"configuration": {
+				"host": "localhost",
+				"port": "3306",
+				"database": "test_minwook",
+				"url": "jdbc:mariadb://localhost:3306/test_minwook",
+				"configurationType": "MANUAL",
+				"home": "C:\\Program Files\\MySQL\\MySQL Server 8.0",
+				"type": "dev",
+				"auth-model": "native"
+			}
+		}
+	},
+	"connection-types": {
+		"dev": {
+			"name": "Development",
+			"color": "255,255,255",
+			"description": "Regular development database",
+			"auto-commit": true,
+			"confirm-execute": false,
+			"confirm-data-change": false,
+			"smart-commit": false,
+			"smart-commit-recover": false,
+			"auto-close-transactions": true,
+			"close-transactions-period": 1800
+		}
+	}
+}
