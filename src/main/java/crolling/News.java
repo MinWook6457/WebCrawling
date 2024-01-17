@@ -77,6 +77,8 @@ public class News {
     }
     
     public static void main(String[] args) {
+    	
+    	
         try {
             Document doc = Jsoup.connect(news_url).get(); // url 파싱
             db DatabaseManager = new db(); // db 연동 객체 선언
