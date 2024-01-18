@@ -9,6 +9,6 @@
     <property name="suffix" value=".jsp" />
 </bean>
 <!-- 공통 패키지(공통 경로) 설정 -->
-<context:component-scan base-package="com.gon.crolling" />
+<context:component-scan base-package="com.gon.crawling" />
 	
 </beans>

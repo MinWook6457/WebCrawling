@@ -1,11 +1,18 @@
-<%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
-<!DOCTYPE html>
-<html lang="en">
+<!-- src/main/webapp/WEB-INF/views/news.jsp -->
+<%@ page contentType="text/html;charset=UTF-8" language="java" %>
+<html>
 <head>
-    <meta charset="UTF-8">
-    <title>Spring Boot MVC</title>
+    <title>News</title>
 </head>
 <body>
-    <h1>${message}</h1>
+    <h1>News Articles</h1>
+    <c:forEach var="info" items="${newsList}">
+        <h2>${article.title}</h2>
+        <p>${article.content}</p>
+        <p>${article.source}</p>
+        <p>${article.uploadTime}</p>
+        <img src="${article.imageUrl}" alt="Article Image">
+        <!-- 필요한 다른 정보도 동일한 방식으로 표시 가능 -->
+    </c:forEach>
 </body>
 </html>
