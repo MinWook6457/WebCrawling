@@ -5,7 +5,7 @@ import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 
-import com.insilicogen.crawl.model.info;
+import com.insilicogen.crawl.model.Info;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -21,7 +21,7 @@ public class News {
 
     public static String news_url = "https://news.naver.com/main/list.naver?mode=LS2D&sid2=230&mid=shm";
     public static String tag = "#main_content > div.list_body.newsflash_body";
-    public static ArrayList<info> list = new ArrayList<info>();
+    public static ArrayList<Info> list = new ArrayList<Info>();
     
     public static String destinationFolder = "C:\\Users\\kih25\\OneDrive\\바탕 화면\\Test\\crolling\\image"; // 절대 경로 사용
     public static int imgCount = 0;
@@ -65,13 +65,13 @@ public class News {
                 String imageUrl = imageElement.attr("src"); // imageElement 에서 src 속성을 추출하여 imageUrl 저장
                 System.out.println("이미지 경로: " + imageUrl);
                 
-                info i = new info(title,content,publisher,upload,imageUrl);
+                Info i = new Info(title,content,publisher,upload,imageUrl);
                 
                 list.add(i);
             } else {
                 System.out.println("이미지가 없습니다.");
                 String imageUrl = "";
-                info i = new info(title,content,publisher,upload,imageUrl);
+                Info i = new Info(title,content,publisher,upload,imageUrl);
                 list.add(i);
             }
             System.out.println("------------------------");
@@ -95,7 +95,7 @@ public class News {
             Elements normalElements = body.select("ul.type06 > li");
             printArticleInfo("normal", normalElements);
             
-            for(info i : list) { //for문을 통한 전체출력
+            for(Info i : list) { //for문을 통한 전체출력
             	if (!i.getUrl().equals("")) { // 이미지가 있는 경우에만 다운로드 및 저장
                     downloadImage(i.getUrl(), destinationFolder, i.getTitle()); // 폴더에 저장
                     DatabaseManager.insertArticle(i); // 디비에 저장

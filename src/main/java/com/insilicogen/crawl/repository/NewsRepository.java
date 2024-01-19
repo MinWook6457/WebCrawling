@@ -1,13 +1,12 @@
 package com.insilicogen.crawl.repository;
 
-/*
- * 데이터베이스와 상호작용하는 레포지스토리 인터페이스
- * */
-
-import com.insilicogen.crawl.model.info;
-
+import com.insilicogen.crawl.dto.InfoDto;
 import org.springframework.data.jpa.repository.JpaRepository;
 
-public interface NewsRepository extends JpaRepository<info, Long> {
-	
+import java.util.List;
+
+@Repository
+public interface NewsRepository extends JpaRepository<InfoDto, Long> {
+    // 제목으로 데이터 조회
+    List<InfoDto> findByTitle(String title);
 }

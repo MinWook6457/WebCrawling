@@ -5,7 +5,7 @@ import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
 
-import com.insilicogen.crawl.model.info;
+import com.insilicogen.crawl.model.Info;
 
 public class db {
 	private static final String jdbc ="jdbc:mariadb://localhost:3306/test_minwook"; // jdbc 드라이버 : db와 통신하는 자바 API
@@ -17,7 +17,7 @@ public class db {
     	return DriverManager.getConnection(jdbc,username,pw); // Connection 객체 반환
     }
     
-    public void insertArticle(info article) {
+    public void insertArticle(Info article) {
     	String sql = "INSERT INTO t_article_m (title, contents, publisher, upload, imgUrl) VALUES (?, ?, ?, ?, ?)";
    
     	try (Connection connection = getConnection(); // sql 연결

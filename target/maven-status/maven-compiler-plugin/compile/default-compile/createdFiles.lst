@@ -1,0 +1,10 @@
+com\insilicogen\crawling\News.class
+com\insilicogen\crawling\info.class
+com\insilicogen\crawl\service\NewsService.class
+com\insilicogen\crawl\model\Info.class
+com\insilicogen\crawling\db.class
+com\insilicogen\crawl\repository\NewsRepository.class
+com\insilicogen\crawl\dto\InfoDto.class
+com\insilicogen\crawl\controller\NewsController.class
+com\insilicogen\CrawlingApplication.class
+com\insilicogen\ServletInitializer.class
