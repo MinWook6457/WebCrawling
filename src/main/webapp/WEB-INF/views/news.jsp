@@ -1,19 +1,25 @@
-<!-- src/main/webapp/WEB-INF/views/news.jsp -->
-<%@ page contentType="text/html;charset=UTF-8" language="java" %>
+<!DOCTYPE html>
+<%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
-<html>
-<head>
-    <title>News</title>
-</head>
-<body>
-    <h1>News Articles</h1>
-    <c:forEach var="info" items="${info}">
-        <h2>${info.title}</h2>
-        <p>${info.content}</p>
-        <p>${info.publisher}</p>
-        <p>${info.upload}</p>
-        <img src="${article.url}" alt="url">
-        <!-- 필요한 다른 정보도 동일한 방식으로 표시 가능 -->
-    </c:forEach>
-</body>
-</html>
+
+
+<title>News Page</title>
+
+<script>
+	
+</script>
+
+<h2>News List</h2>
+<c:forEach var="news" items="${newsList}"> <!-- 컨트롤러에서 받아온 newsList를 반복을 돌면서 실행 -->>
+    <div>
+        <h3>Title : ${news.title}</h3>
+        <p>Content : ${news.content}</p>
+        <p>Publisher: ${news.publisher}</p>
+        <p>Upload Date: ${news.upload}</p>
+        <p>URL: ${news.url}</p>
+        
+        <!-- 이미지 출력 -->>
+         <img src="${imagePath}/${news.url}.jpg" alt="News Image">
+    </div>
+    <hr/>
+</c:forEach>

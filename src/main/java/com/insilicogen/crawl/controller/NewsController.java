@@ -1,23 +1,29 @@
 package com.insilicogen.crawl.controller;
 
-import com.insilicogen.crawl.service.NewsService;
+import java.util.List;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.ResponseBody;
+
+import com.insilicogen.crawl.dto.InfoDto;
+import com.insilicogen.crawl.service.NewsService;
 
 @Controller
-@RequestMapping(value = "/news")
 public class NewsController {
 
-    @Autowired
-    private NewsService newsService;
+	@Autowired
+	private NewsService newsService;
 
-    @GetMapping("/crawl")
-    @ResponseBody
-    public String crawlAndSaveNews() {
-        newsService.crawlAndSaveNews();
-        return "Crawling and saving news completed!";
-    }
+	@GetMapping("/news") // 통신할 url
+	public String crawlAndSaveNews(Model model) {
+		List<InfoDto> newsList = newsService.crawlAndSaveNews(); // 서비스 단에서 로직 실행하여 데이터 불러옴
+		
+		model.addAttribute("imagePath", NewsService.destinationFolder); // 컨트롤러에서 뷰 단에 해당 데이터를 보냄
+		
+		model.addAttribute("newsList", newsList);
+	
+		return "news"; // news.jsp로 포워딩
+	}
 }
