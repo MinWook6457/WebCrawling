@@ -24,7 +24,6 @@ public class InfoDto {
     private String content;
     private String publisher;
     private String upload;
-    private String url;
     
     // 1:1 관계 설정
     @OneToOne(mappedBy = "infoDto", cascade = CascadeType.ALL, orphanRemoval = true)

@@ -1,50 +1,71 @@
+<!DOCTYPE html>
 <%@ page language="java" contentType="text/html; charset=UTF-8"
 	pageEncoding="UTF-8"%>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
+<script src="resources/js/jquery/jquery-3.7.1.js"></script>
+<script src="resources/js/bootstrap/bootstrap.bundle.js"></script>
 
-<!DOCTYPE html>
-<html>
-<head>
+<link href="resources/css/bootstrap/bootstrap.css" rel="stylesheet" />
 <title>News Page</title>
-<style>
-/* Optional: Add some styling for better presentation */
-body {
-	font-family: Arial, sans-serif;
-	margin: 20px;
-}
 
-h2 {
-	color: #333;
-}
+<script>
+	function crawling() {
+		$.ajax({
+			type : "GET",
+			url : "/crawling",
+			data : application.json,
+			success : function(response) {
+				alert(response);
+			},
+			error : function() {
+				alert("Error crawling.");
+			}
+		});
+	}
 
-div {
-	margin-bottom: 20px;
-}
+	function loadNews(page, pageSize) {
+		$.ajax({
+			type : "GET",
+			url : "/selectNewsList",
+			data : {
+				page : page,
+				pageSize : pageSize
+			},
+			dataType : "json",
+			success : function(response) {
+				newsList = response.newsList
+				
+				console.log(newsList)
+			},
+			error : function() {
+				alert("Error loading News")
+			}
+		})
+	}
 
-img {
-	max-width: 100%;
-	height: auto;
-}
-</style>
-</head>
-<body>
+	$(document).ready(function() {
+		// 페이지 로딩 시 자동으로 크롤링 초기화
+		crawling();
+	});
+</script>
 
+
+<div class="container pt-5">
 	<h2>News List</h2>
+	<table class="table">
+		<thead>
+			<tr>
+				<th>Title</th>
+				<th>Content</th>
+				<th>Publisher</th>
+				<th>Upload Date</th>
+				<th>Image</th>
+			</tr>
+		</thead>
+	</table>
+	<nav aria-label="Page navigation">
+		<ul class="pagination" id="pagination">
 
-	<c:forEach var="news" items="${newsList}">
-		<div>
-			<h3>Title: ${news.title}</h3>
-			<p>Content: ${news.content}</p>
-			<p>Publisher: ${news.publisher}</p>
-			<p>Upload Date: ${news.upload}</p>
-			<p>URL: ${news.url}</p>
-
-
-			<!-- Display the image -->
-			<img src="${news.imageDto.imageUrl}.jpg">
-		</div>
-		<hr />
-	</c:forEach>
-
-</body>
-</html>
+		</ul>
+	</nav>
+</div>
