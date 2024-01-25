@@ -7,6 +7,8 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.OneToOne;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 import lombok.Getter;
 import lombok.Setter;
 
@@ -20,6 +22,7 @@ public class ImageDto {
 
     private String imageUrl;
 
+    @JsonIgnore
     @OneToOne
     @JoinColumn(name = "info_id", unique = true) // info_id를 외래키로 가짐
     private InfoDto infoDto;

@@ -21,14 +21,12 @@ public class NewsController {
 	@Autowired
 	private NewsService newsService;
 
-	@Autowired
-	private NewsRepository newsRepository;
-
 	@GetMapping("/news")
 	public String news() {
 		return "news"; // news.jsp로 포워딩
 	}
 
+	// 
 	@GetMapping("/crawling")
 	public String crawlingNews(Model model) {
 		List<InfoDto> newsList = newsService.crawlAndSaveNews(); // 기본값으로 1일치 크롤링
@@ -41,7 +39,7 @@ public class NewsController {
 	@ResponseBody
 	public Map<String, Object> selectNewsList(Model model, 
 	        @RequestParam(defaultValue = "1") int page,
-	        @RequestParam(defaultValue = "10") int pageSize) {
+	        @RequestParam(defaultValue = "20") int pageSize) {
 
 	    List<InfoDto> newsList = newsService.getPage(page, pageSize);
 	    int totalItems = newsService.getTotalNewsCount();
