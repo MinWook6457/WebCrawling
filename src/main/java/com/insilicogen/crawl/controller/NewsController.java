@@ -10,9 +10,9 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.servlet.ModelAndView;
 
 import com.insilicogen.crawl.dto.InfoDto;
-import com.insilicogen.crawl.repository.NewsRepository;
 import com.insilicogen.crawl.service.NewsService;
 
 @Controller
@@ -26,14 +26,15 @@ public class NewsController {
 		return "news"; // news.jsp로 포워딩
 	}
 
-	// 
+	/*
 	@GetMapping("/crawling")
 	public String crawlingNews(Model model) {
-		List<InfoDto> newsList = newsService.crawlAndSaveNews(); // 기본값으로 1일치 크롤링
+		List<InfoDto> newsList = newsService.crawlAndSaveNews();
 		model.addAttribute("newsList", newsList);
 		model.addAttribute("imagePath", NewsService.destinationFolder);
 		return "news";
 	}
+	*/
 
 	@GetMapping("/selectNewsList")
 	@ResponseBody
@@ -54,13 +55,15 @@ public class NewsController {
 
 	@GetMapping("/initCrawling")
 	@ResponseBody
-	public String initCrawling() {
-		try {
-			newsService.crawlAndSaveNews();
-			return "Crawling initiated successfully!";
+	public ModelAndView initCrawling(Model model) {
+		try {			
+			List<InfoDto> newsList = newsService.crawlAndSaveNews();
+			model.addAttribute("newsList", newsList);
+			model.addAttribute("imagePath", NewsService.destinationFolder);
+			return new ModelAndView("news", model.asMap());
 		} catch (Exception e) {
 			e.printStackTrace();
-			return "Error initiating crawling.";
+			return new ModelAndView("errorPage", "error", "Error initiating crawling.");
 		}
 	}
 }

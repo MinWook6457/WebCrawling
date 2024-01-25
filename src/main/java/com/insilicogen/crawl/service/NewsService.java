@@ -44,15 +44,13 @@ public class NewsService {
 	// 이미지 다운로드 함수
 	public void downloadImage(String imageUrl, String destinationFolder, InfoDto i) {
 		try {
-			if (StringUtil.isBlank(imageUrl)) {
-				System.out.println("Image URL is blank. Skipping download.");
-			}
-
-			URL url = new URL(imageUrl);
-			try (InputStream in = url.openStream()) {
-				String fileName = i.getImageDto().getId() + ".jpg";
-				Path destinationPath = Paths.get(destinationFolder, fileName);
-				Files.copy(in, destinationPath, StandardCopyOption.REPLACE_EXISTING);
+			if (!imageUrl.equals("")) { // 수정된 부분
+				URL url = new URL(imageUrl);
+				try (InputStream in = url.openStream()) {
+					String fileName = i.getImageDto().getId() + ".jpg";
+					Path destinationPath = Paths.get(destinationFolder, fileName);
+					Files.copy(in, destinationPath, StandardCopyOption.REPLACE_EXISTING);
+				}
 			}
 		} catch (IOException e) {
 			e.printStackTrace();
@@ -67,10 +65,15 @@ public class NewsService {
 			String title = element.select("dt:not(.photo) > a").text().trim();
 			String content = element.select("dd > span.lede").text().trim();
 			String publisher = element.select("dd > span.writing").text().trim();
-			String upload1 = element.select("dd > span.date.is_new").text().trim();
-			String upload2 = element.select("dd > span.date.is_outdated").text().trim();
-
+			String upload1 = element.select("dd > span.date.is_new").text().trim(); // ~분전
+			String upload2 = element.select("dd > span.date.is_outdated").text().trim(); // ~시간전
+			String upload3 = element.select("dd > span.date.is_outdated").text().trim(); // ~6일전 까지는 is_outdated
+			// 그 이후로는 date 값이 온다.
+			String upload4 = element.select("dd > span.date").text().trim(); // 
+			
 			Element imageElement = element.selectFirst("dl > dt.photo img");
+			
+			
 
 			if (upload1.contains("분")) {
 				String imageUrl = (imageElement != null) ? imageElement.attr("src") : "";
@@ -80,10 +83,22 @@ public class NewsService {
 
 			}
 
-			if (upload2.contains("시")) {
+			else if (upload2.contains("시")) {
 				String imageUrl = (imageElement != null) ? imageElement.attr("src") : "";
 
 				Info info = new Info(title, content, publisher, upload2, imageUrl);
+				newsList.add(saveData(info));
+			} 
+			
+			else if (upload3.contains("일")) {
+				String imageUrl = (imageElement != null) ? imageElement.attr("src") : "";
+
+				Info info = new Info(title, content, publisher, upload3, imageUrl);
+				newsList.add(saveData(info));
+			}else {
+				String imageUrl = (imageElement != null) ? imageElement.attr("src") : "";
+
+				Info info = new Info(title, content, publisher, upload4, imageUrl);
 				newsList.add(saveData(info));
 			}
 		}
@@ -101,6 +116,7 @@ public class NewsService {
 
 	// 초기 크롤링 함수
 	public List<InfoDto> crawlAndSaveNews() {
+		System.out.println("크롤링 시작!!");
 		List<InfoDto> newsList = new ArrayList<>();
 
 		String page = "&page=1";
@@ -108,6 +124,7 @@ public class NewsService {
 		try {
 			for (int date = 0; date < 30; date++) {
 				Date currentDate = new Date();
+				currentDate = decrementDate(currentDate, date);
 				SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyyMMdd");
 
 				String formattedDate = simpleDateFormat.format(currentDate);
@@ -118,8 +135,11 @@ public class NewsService {
 				Element body = doc.selectFirst(newsTag);
 
 				// 헤드라인 기사와 일반기사 구문 하지 않음
-				Elements allElements = body.select("ul.type06_headline > li, ul.type06 > li");
-				newsList.addAll(crawlingNewsInInfo(allElements));
+				Elements headlineElements = body.select("ul.type06_headline > li");
+				newsList.addAll(crawlingNewsInInfo(headlineElements));
+
+				Elements normalElements = body.select("ul.type06 > li");
+				newsList.addAll(crawlingNewsInInfo(normalElements));
 
 				// 이미지 다운로드 및 뉴스 저장
 				for (InfoDto info : newsList) {
@@ -130,14 +150,14 @@ public class NewsService {
 
 				System.out.println("크롤링 완료");
 
-				newsList = newsRepository.saveAll(newsList);
+				
 
-				currentDate = decrementDate(currentDate); // 크롤링 후 하루 감소
 			}
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
-
+		
+		newsRepository.saveAll(newsList);
 		return newsList;
 	}
 
@@ -151,12 +171,12 @@ public class NewsService {
 	}
 
 	/* 날짜가 주어지면 하루 씩 줄어드는 메소드 작성 */
-	private static Date decrementDate(Date date) {
+	private static Date decrementDate(Date date, int minusDate) {
 		Calendar calendar = Calendar.getInstance();
 		calendar.setTime(date);
 
 		// 현재 일자에서 1일을 뺍니다.
-		calendar.add(Calendar.DATE, -1);
+		calendar.add(Calendar.DATE, -minusDate);
 
 		return calendar.getTime();
 	}

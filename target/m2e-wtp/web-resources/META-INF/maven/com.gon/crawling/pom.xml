@@ -93,13 +93,14 @@
 			<artifactId>tomcat-embed-jasper</artifactId>
 			<version>10.1.17</version>
 		</dependency>
-		
+
 		<!-- javax.xml.bind 패키지 모듈화로 인한 오류 발생 해결 -->
 		<dependency>
 			<groupId>javax.xml.bind</groupId>
 			<artifactId>jaxb-api</artifactId>
 			<version>2.3.1</version>
 		</dependency>
+
 	</dependencies>
 
 	<build>

@@ -12,13 +12,13 @@
     var newsList = [];
     var currentPage = 1;
 
-    function crawling() {
+    function initCrawling() {
         $.ajax({
             type: "GET",
             url: "/initCrawling",
-            data: application.json,
+            data: {},
             success: function (response) {
-                alert(response);
+                console.log(response)
             },
             error: function () {
                 alert("Error crawling.");
@@ -27,7 +27,6 @@
     }
 
     function loadNews(page, pageSize) {
-
         $.ajax({
             type: "GET",
             url: "/selectNewsList",
@@ -35,14 +34,14 @@
                 page: page,
                 pageSize: pageSize
             },
-            dataType: "json",
             success: function (response) {
+            	console.log(response);
                 newsList = response.newsList;
                 displayNews();
                 console.log(newsList);
             },
             error: function () {
-                alert("Error loading News");
+                alert("load News Error");
             }
         })
     }
@@ -71,9 +70,8 @@
     }
 
     // 버튼 클릭 시 다음 페이지 호출
-    $("button").on("click", function () {
-        currentPage++; // 다음 페이지로 이동
-        loadNews(currentPage, 20);
+    $("button").on("click", function () {      
+        loadNews(currentPage++, 20);        
     });
 
     // 초기 페이지 로드
@@ -84,7 +82,7 @@
 
     //버튼 클릭 시 params를 ajax 통신으로 보내도록 수정
     $("button").on("click", function () {
-        var url = "/test";
+        var url = "/initCrawling/button";
         var params = {
             page: currentPage,
             pageSize: 20
@@ -101,7 +99,7 @@
                 console.log(newsList);
             },
             error: function () {
-                alert("Error loading News");
+                alert("btn error");
             }
         });
     });
