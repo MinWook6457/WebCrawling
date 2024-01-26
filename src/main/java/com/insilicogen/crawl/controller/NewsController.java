@@ -40,19 +40,22 @@ public class NewsController {
 	@ResponseBody
 	public Map<String, Object> selectNewsList(Model model, 
 	        @RequestParam(defaultValue = "1") int page,
-	        @RequestParam(defaultValue = "20") int pageSize) {
-
-	    List<InfoDto> newsList = newsService.getPage(page, pageSize);
+	        @RequestParam(defaultValue = "20") int pageSize,
+	        @RequestParam(defaultValue = "") String imgUrl
+			) {
+	    List<InfoDto> newsList = newsService.getPage(page, pageSize,imgUrl);
 	    int totalItems = newsService.getTotalNewsCount();
 
 	    Map<String, Object> response = new HashMap<>();
 	    response.put("newsList", newsList);
 	    response.put("totalItems", totalItems);
 	    
+	    
 	    return response;
 	}
 
 
+	// 크롤링 컨트롤러
 	@GetMapping("/initCrawling")
 	@ResponseBody
 	public ModelAndView initCrawling(Model model) {

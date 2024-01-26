@@ -13,6 +13,6 @@ import com.insilicogen.crawl.dto.InfoDto;
 public interface NewsRepository extends JpaRepository<InfoDto, Long> {
 
     @Query(value = "SELECT * FROM INFO_DTO info_dto LIMIT ?1, ?2", nativeQuery = true)
-    List<InfoDto> findNewsList(int offset , int pageSize);
+    List<InfoDto> findNewsList(int offset , int pageSize, String imgUrl);
 
 }

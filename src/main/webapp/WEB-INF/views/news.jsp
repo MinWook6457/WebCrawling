@@ -106,7 +106,7 @@
 </script>
 
 <div class="container pt-5">
-    <button class="btn btn-primary" type="submit" style="float: right; position: relative;">Button</button>
+    <button class="btn btn-primary" type="submit" style="float: right; position: relative;">Start Crawling</button>
     <h2 style="text-align: center;">News List</h2>
     <table class="table">
         <thead>
@@ -114,7 +114,7 @@
                 <th>Title</th>
                 <th>Content</th>
                 <th>Publisher</th>
-                <th>Upload Date</th>
+                <th>Upload Date</th>                
                 <th>Image</th>
             </tr>
         </thead>

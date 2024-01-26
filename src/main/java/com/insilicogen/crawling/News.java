@@ -19,8 +19,8 @@ import java.nio.file.StandardCopyOption;
 
 public class News {
 
-    public static String news_url = "https://news.naver.com/main/list.naver?mode=LS2D&sid2=230&mid=shm";
-    public static String tag = "#main_content > div.list_body.newsflash_body";
+    public static String news_url = "https://news.naver.com/breakingnews/section/105/230?date=20240125";
+    public static String tag = "#main_content > div.list_body.newsflash_body"; 
     public static ArrayList<Info> list = new ArrayList<Info>();
     
     public static String destinationFolder = "C:\\Users\\kih25\\OneDrive\\바탕 화면\\Test\\crolling\\image"; // 절대 경로 사용
@@ -88,11 +88,12 @@ public class News {
             Element body = doc.selectFirst(tag); // 태그 몸체
 
             // headline 기사 추출
-            Elements headlineElements = body.select("ul.type06_headline > li");
+            Elements headlineElements = body.select(".sa_item_flex");
             printArticleInfo("headline", headlineElements);
 
             // 일반 기사 추출
-            Elements normalElements = body.select("ul.type06 > li");
+            Elements normalElements = body.select(".sa_item_flex");
+            System.out.println(normalElements);
             printArticleInfo("normal", normalElements);
             
             for(Info i : list) { //for문을 통한 전체출력
