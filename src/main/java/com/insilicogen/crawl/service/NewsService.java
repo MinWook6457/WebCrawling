@@ -18,6 +18,9 @@ import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import com.insilicogen.crawl.dto.ImageDto;
@@ -31,7 +34,8 @@ public class NewsService {
 	public static String destinationFolder = "C:\\Users\\kih25\\OneDrive\\바탕 화면\\Test\\crawling\\image";
 
 	private final String newsUrl = "https://news.naver.com/breakingnews/section/105/230";
-	private final String newsTag = "#newsct > div.section_latest > div > div.section_latest_article._CONTENT_LIST._PERSIST_META"; // 공통 태그
+	private final String newsTag = "#newsct > div.section_latest > div > div.section_latest_article._CONTENT_LIST._PERSIST_META"; // 공통
+																																	// 태그
 
 	@Autowired
 	private NewsRepository newsRepository;
@@ -69,9 +73,12 @@ public class NewsService {
 
 			String title = element.select("a > strong").text().trim();
 			String content = element.select("div.sa_text_lede").text().trim();
-			String publisher = element.select("div.sa_text_info > div.sa_text_info_left > div.sa_text_press").text().trim();
-			String upload1 = element.select("div.sa_text_info > div.sa_text_info_left > div.sa_text_datetime.is_recent").text().trim();
-			String upload2 = element.select("div.sa_text_info > div.sa_text_info_left > div.sa_text_datetime").text().trim();
+			String publisher = element.select("div.sa_text_info > div.sa_text_info_left > div.sa_text_press").text()
+					.trim();
+			String upload1 = element.select("div.sa_text_info > div.sa_text_info_left > div.sa_text_datetime.is_recent")
+					.text().trim();
+			String upload2 = element.select("div.sa_text_info > div.sa_text_info_left > div.sa_text_datetime").text()
+					.trim();
 
 			if (upload1.contains("분")) {
 				String imageUrl = imageElement.select(".sa_thumb_inner img").attr("data-src");
@@ -123,7 +130,8 @@ public class NewsService {
 
 				Elements articleElements = childElements.select("ul > li:nth-child(2) > div > div > div.sa_text");
 
-				Elements imgElement = childElements.select("ul > li:nth-child(3) > div > div > div.sa_thumb._LAZY_LOADING_ERROR_HIDE > div");
+				Elements imgElement = childElements
+						.select("ul > li:nth-child(3) > div > div > div.sa_thumb._LAZY_LOADING_ERROR_HIDE > div");
 
 				// 이미지 다운로드 및 뉴스 저장
 				dailyNewsList.addAll(crawlingNewsInInfo(articleElements, imgElement));
@@ -140,16 +148,15 @@ public class NewsService {
 		return newsList;
 	}
 
-	public List<InfoDto> getPage(int page, int pageSize,String imgUrl) {
-		int offset = (page - 1) * pageSize;
-		
-		return newsRepository.findNewsList(offset, pageSize,imgUrl);
-		
-	}
+	public Page<InfoDto> getPagedNews(int page, int pageSize) {
+        Pageable pageable = PageRequest.of(page - 1, pageSize);
+        return newsRepository.findPagedNewsList(pageable);
+    }
 
 	public int getTotalNewsCount() {
 		return (int) newsRepository.count();
 	}
+	
 
 	/* 날짜가 주어지면 하루 씩 줄어드는 메소드 작성 */
 	private static Date decrementDate(Date date, int minusDate) {
