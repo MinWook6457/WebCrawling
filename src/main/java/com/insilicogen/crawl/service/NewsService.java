@@ -149,6 +149,7 @@ public class NewsService {
 	}
 
 	public Page<InfoDto> getPagedNews(int page, int pageSize) {
+		
         Pageable pageable = PageRequest.of(page - 1, pageSize);
         return newsRepository.findPagedNewsList(pageable);
     }

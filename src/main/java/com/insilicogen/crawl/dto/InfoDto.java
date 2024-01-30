@@ -7,6 +7,7 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
+import javax.persistence.Transient;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
@@ -30,6 +31,11 @@ public class InfoDto {
     private String content;
     private String publisher;
     private String upload;
+    
+    @Transient
+    private String page;
+    @Transient
+	private String pageSize;
     
     // 1:1 관계 설정
     @JsonIgnore
