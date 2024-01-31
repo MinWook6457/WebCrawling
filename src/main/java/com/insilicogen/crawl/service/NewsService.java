@@ -21,6 +21,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.stereotype.Service;
 
 import com.insilicogen.crawl.dto.ImageDto;
@@ -149,15 +150,18 @@ public class NewsService {
 	}
 
 	public Page<InfoDto> getPagedNews(int page, int pageSize) {
-		
-        Pageable pageable = PageRequest.of(page - 1, pageSize);
-        return newsRepository.findPagedNewsList(pageable);
-    }
+		if (page <= 0 || pageSize <= 0) {
+			page = 1;
+			pageSize = 10;
+		}
+
+		Pageable pageable = PageRequest.of(page - 1, pageSize);
+		return newsRepository.findPagedNewsList(pageable);
+	}
 
 	public int getTotalNewsCount() {
 		return (int) newsRepository.count();
 	}
-	
 
 	/* 날짜가 주어지면 하루 씩 줄어드는 메소드 작성 */
 	private static Date decrementDate(Date date, int minusDate) {

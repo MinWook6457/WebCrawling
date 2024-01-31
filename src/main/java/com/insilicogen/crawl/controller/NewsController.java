@@ -29,7 +29,7 @@ public class NewsController {
     @PostMapping("/news/selectNewsList")
     @ResponseBody
     public Page<InfoDto> selectNewsList(@RequestBody InfoDto infoDto) {
-        return newsService.getPagedNews(Integer.parseInt(infoDto.getPage()), Integer.parseInt(infoDto.getPageSize()));
+        return newsService.getPagedNews(infoDto.getPage(),infoDto.getPageSize());
     }
 
 //    @GetMapping("/news/selectNewsList")
@@ -61,7 +61,7 @@ public class NewsController {
     @GetMapping("/news/initCrawling")
     public ModelAndView initCrawling(Model model,
     		@RequestParam(defaultValue = "1") int currentPage,
-    		@RequestParam(defaultValue = "10") int pageSize
+    		@RequestParam(defaultValue = "10") int pageUnit
     		) {
         try {
             newsService.crawlAndSaveNews();

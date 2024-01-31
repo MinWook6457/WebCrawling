@@ -33,9 +33,9 @@ public class InfoDto {
     private String upload;
     
     @Transient
-    private String page;
+    private int page;
     @Transient
-	private String pageSize;
+	private int pageSize;
     
     // 1:1 관계 설정
     @JsonIgnore

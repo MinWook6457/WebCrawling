@@ -5,9 +5,6 @@
 <script src="resources/js/jquery/jquery-3.7.1.js"></script>
 <script src="https://code.jquery.com/jquery-3.4.1.js"></script>
 <script src="resources/js/bootstrap/bootstrap.bundle.js"></script>
-<!-- <script src="/static/js/bootstrap.bundle.js"></script> -->
-
-
 
 <link href="resources/css/bootstrap/bootstrap.css" rel="stylesheet" />
 <title>News Page</title>
@@ -20,39 +17,40 @@
 
 <script>
 // 	var newsList = [];
-	var currentPage = 1;  // 초기 페이지
-
+	
 // 	var imageUrl;
 	
 	$(document).ready(function() {
 // 		alert("초기 페이지를 로드합니다.");
-// 		initCrawling(); 
 		loadNews(1);
+		
 
 		$(".dropdown-item").on("click", function() {
-			pageSize = parseInt($(this).text());
 			currentPage = 1; // 드랍 다운 메뉴로 크기 변경 시 마다 초기 페이지로 초기화
 			loadNews(currentPage); 			
 		})
 
 		// 페이지네이션 클릭 이벤트 처리
-		$("#pagination").on("click", "a.page-link", function(event) {
-			event.preventDefault();
-			var clickedPage = $(this).data("page");
+// 		$("#pagination").on("click", "a.page-link", function(event) {
+// 			event.preventDefault();
+// 			var clickedPage = $(this).data("page");
 
-			if (clickedPage === "Prev") {
-				if (currentPage > 1) {
-					currentPage--;
-					loadNews(currentPage);
-				}
-			} else if (clickedPage === "Next") {
-				currentPage++;
-				loadNews(currentPage);
-			} else {
-				currentPage = clickedPage;
-				loadNews(currentPage);
-			}
-		});
+// 			if (clickedPage === "Prev") {
+// 				if (currentPage > 1) {
+// 					currentPage--;
+// 					console.log("Previous clicked. New Page:", currentPage);
+// 					loadNews(currentPage,defaultPageUnit);
+// 				}
+// 			} else if (clickedPage === "Next") {
+// 				currentPage++;
+// 				console.log("Next clicked. New Page:", currentPage);
+// 				loadNews(currentPage,defaultPageUnit);
+// 			} else {
+// 				currentPage = clickedPage;
+// 				console.log("Page clicked. New Page:", currentPage);
+// 				loadNews(currentPage,defaultPageUnit);
+// 			}
+// 		});
 	});
 
 	function initCrawling() {
@@ -60,13 +58,13 @@
 			type : "GET",
 			url : "/crawl/news/initCrawling",
 			data : {
-				pageSize : pageSize,
-				currentPage : currentPage
-				},
-			success : function(response) {
+				currentPage : currentPage,
+				pageUnit : pageUnit
+			},
+			success : function(res) {
 // 				newsList = response.initResponse.newsList;
 // 				createPagination(response.ajaxResponse.totalItems);
-				loadNews(1);
+				loadNews(res.currentPage,res.pageUnit);
 			},
 			error : function() {
 				alert("Error crawling.");
@@ -74,18 +72,18 @@
 		});
 	}
 
-	function loadNews(page) {
+	function loadNews(pageNo) {		
 		var param = {
-			page : page	
-		};
-		
+			pageNo : pageNo,
+			defaultPageUnit : $('#pageUnit').val()
+		}
 		$.ajax({
 			type : "POST",
 			url : "/crawl/news/selectNewsList",
 			contentType : "application/json;",
 			data : JSON.stringify(param),
 			success : function(res) {
-				console.log(res)
+				
 				var list = res.content;
 				var html = '';
 				
@@ -99,111 +97,155 @@
 					html += '	<td>' + list[i].publisher + '</td>';
 					html += '	<td>' + list[i].upload + '</td>';
 					if (list[i].imageDto) {
-						html += "<td><img src='" + "${list[i].imageDto.imageUrl}.jpg" + "'></td>";
+						html += "<td><img src='" + list[i].imageDto.image_url + "'></td>";
 					} else {
 						html += "<td>No Image</td>";
 					}
 					html += '</tr>';
 				}
 				$("#newsTableBody").html(html);
-				createPagination(res.totalPages, res.totalElements);
+				param.totalPages = res.totalPages;
+				param.totalElements = res.totalElements;
+				param.onclickNm = 'loadNews';
+				createPagination(param);
 				
 			},
-			error : function() {
-				alert("페이지 네이션 로드 실패" + page);
+			error : function(res) {
+				alert("페이지 네이션 로드 실패" + res);
 			}
 		})
 	}
 	
-// 	function postPageData(){
-// 		$.ajax({
-// 			type : "POST",
-// 			url : 
-			
-// 		})
-// 	}
-		
-	function displayNews() {
-		// 기존에 표시된 내용 초기화
-		$("#newsTableBody").empty();
-
-		// newsList에 있는 데이터를 테이블에 추가
-		for (var i = 0; i < newsList.length; i++) {
-			var news = newsList[i];
-
-			// 각 데이터를 테이블에 추가하는 로직
-			var row = "<tr>" + "<td>" + news.title + "</td>" + "<td>"
-					+ news.content + "</td>" + "<td>" + news.publisher
-					+ "</td>" + "<td>" + news.upload + "</td>";
-
-			// imageDto가 정의되어 있는 경우에만 imageUrl 속성에 접근
-			if (news.imageDto) {
-				row += "<td><img src='" + news.imageDto.imageUrl + "' alt='failed'></td>";
-			} else {
-				row += "<td>No Image</td>";
-			}
-
-			row += "</tr>";
-
-			// 생성한 행을 테이블에 추가
-			$("#newsTableBody").append(row);
+	/*
+	var param = {
+			page : page,
+			pageSize : pageSize
+			totalPages = res.totalPages;
+			totalElements = res.totalElements;
 		}
-	}
-
+	*/
+	
 	// 페이지네이션 생성 함수
-	function createPagination(totalPages, totalElements) {
-		var pageUnit = 5; // 기본 pageUnit 설정
-		
-		var html = ''; // html 생성 
-		$("#pagination").empty(); // 기존 페이지네이션 초기화
-		var currentGroup = Math.ceil(totalPages/pageUnit); 
-		var first = (currentGroup * pageUnit)+1;
-		var last = (currentGroup+1) * pageUnit;
-		
-		var onclickNm = (totalPages && totalPages.onclickNm) || 'fnSelectList';
-		onclickNm = 'javascript:' + onclickNm;
-		
-		var pageSize = totalElements / totalPages;
-		
+	
+	/*
+Prev : 이전 페이지 (이전 그룹)
+Next : 다음 페이지 (다음 그룹)
+Fisrt : 첫 페이지로
+End : 끝 페이지로
+	*/
+function createPagination(pages) {
+    var pageNo = Number(pages.pageNo);
+    var pageUnit = Number(pages.defaultPageUnit);
+    var totalPages = pages.totalPages;
+    var totalElements = pages.totalElements;
 
-		if(currentGroup > pageUnit) {
-			html += "<li class='page-item'> <a class='page-link first' href='onclickNm' data-page='Prev'>Previous</a></li>";
-		}
-		
-		for(var i=0; i<pageSize; i++) {
-			html += "<li class='page-item'><a class='page-link' href='onclickNm('"+i+"')'>" + i + "</a></li>";
-		}
-		
-		// Previous 버튼
-		var prevButton = "<li class='page-item'><a class='page-link' href='onclickNm' data-page='Prev'>Previous</a></li>";
-		$("#pagination").append(prevButton);
+    console.log('createPagination is called')
+    console.log(pages);
 
-		// 숫자 버튼
-		for (var i = 1; i <= pageSize; i++) {
-			var pageButton = "<li class='page-item'><a class='page-link' href='onclickNm' data-page='" + i + "'>"
-					+ i + "</a></li>";
-			$("#pagination").append(pageButton);
-		}
+    console.log('받아온 페이지 값 : ' + totalPages , totalElements)
+ 
 
-		// Next 버튼
-		var nextButton = "<li class='page-item'><a class='page-link' href='onclickNm' data-page='Next'>Next</a></li>";
-		$("#pagination").append(nextButton);
-		
-		 // 현재 페이지 표시
-	    $("#pagination").find("[data-page='" + currentPage + "']").parent().addClass("active");
-	}
+    $("#pagination").empty(); // 기존 페이지네이션 초기화
+    var currentGroup = Math.ceil(pageNo / pageUnit);
+    var first = (currentGroup - 1) * pageUnit + 1;
+    var last = Math.min(currentGroup * pageUnit, totalPages);
+
+    var onclickNm = (pages && pages.onclickNm) || 'fnSelectList';
+    onclickNm = 'javascript:' + onclickNm;
+
+    var totalPageNo = totalElements / totalPages; // 총 페이지 번호
+
+    console.log("총 페이지 넘버 : " + totalPageNo);
+
+    var before = Math.max(first - 1, 1);
+    var after = Math.min(last + 1, totalPages + 1);
+
+    var html = '<ul class="pagination">'; // html 생성
+    if(pageNo > pageUnit) {
+    	html += "<li class='page-item'><a class='page-link' href='" + onclickNm + "('1')'>First</a></li>";
+    }else {
+    	html += "<li class='page-item disabled'><a class='page-link' href='javascript:void(0)'>First</a></li>";
+    }
+    
+    if(pageNo > 1) {
+    	html += "<li class='page-item'><a class='page-link' href='" + onclickNm + "("+before+")'>Prev</a></li>";
+    }else {
+    	html += "<li class='page-item disabled'><a class='page-link' href='javascript:void(0)'>Prev</a></li>";
+    }
+    
+    for (var i = first; i <= last; i++) {
+        html += "<li class='page-item" + (pageNo == i ? ' active' : '') + "'><a class='page-link' href='" + onclickNm + "(" + i + ")'>" + i + "</a></li>";
+    }
+    
+    if (pageNo < totalPages) {
+        html += "<li class='page-item'><a class='page-link' href='" + onclickNm + "(" + after + ")'>Next</a></li>";
+    }else{
+    	html += "<li class='page-item' disabled><a class='page-link' href='javascript:void(0)'>Next</a></li>";
+    }
+    
+    if(currentGroup == Math.ceil(totalPages/pageUnit)) {
+    	html += "<li class='page-item disabled'><a class='page-link' href='javascript:void(0)'>End</a></li>";
+    }else {
+    	html += "<li class='page-item'><a class='page-link' href='" + onclickNm + "(" + last + ")'>End</a></li>";
+    }
+    
+//     if (currentGroup < totalPageNo) {
+//     	if(currentGroup == 1){
+//             html += "<li class='page-item' disabled><a class='page-link' href='" + onclickNm + "(" + before + ")'>Previous</a></li>";
+//     	}else{
+//             html += "<li class='page-item'><a class='page-link' href='" + onclickNm + "(" + before + ")'>Previous</a></li>";
+//     	}
+//     }
+
+//     for (var i = first; i <= last; i++) {
+//         html += "<li class='page-item'><a class='page-link" + (pageNo == i ? ' active' : '') + "' href='" + onclickNm + "(" + i + ")' data-page='" + i + "'>" + i + "</a></li>";
+//     }
+
+//     if (currentGroup < totalPageNo) {	
+//         html += "<li class='page-item'><a class='page-link' href='" + onclickNm + "(" + after + ")'>Next</a></li>";
+//         html += "<li class='page-item'><a class='page-link' href='" + onclickNm + "(" + last + ")' >End</a></li>";
+//     }else if(pageNo == totalPages){
+//     	html += "<li class='page-item' disabled><a class='page-link' href='javascript:void(0)'>Next</a></li>";
+//     }
+    
+    html += '</ul>';
+    $("#pagination").append(html);
+}
+	
+// Prev 버튼 클릭 이벤트 처리
+// $("#pagination").on("click", "a[data-page='Prev']", function (event) {
+//     event.preventDefault();
+//     if (currentPage > 1) {
+//         currentPage--;
+//         loadNews(currentPage, pageUnit);
+//     }
+// });
+
+// $("#pagination").on("click", "a[data-page='Next']", function (event) {
+//     event.preventDefault();
+//     if (currentGroup < totalPages) {
+//         currentPage++;
+//         loadNews(currentPage, pageUnit);
+//     }
+// });
+
 </script>
 
 
 
 <div class="container pt-5">
-	<div class="dropdown-center" style="float: right;">
+	<div class="dropdown-center" id="pageDiv" style="float: right;">
+		<input type="hidden" name="pageUnit" id="pageUnit" value="10" />
 		<button class="btn btn-secondary dropdown-toggle" type="button"
-			data-toggle="dropdown" aria-expanded="false">Crawling Display Menu</button>
+			data-toggle="dropdown" aria-expanded="false">Crawling
+			Display Menu</button>
 		<ul class="dropdown-menu">
-			<li><a class="dropdown-item" href="#">5개씩 보기</a></li>
-			<li><a class="dropdown-item" href="#">10개씩 보기</a></li>
-			<li><a class="dropdown-item" href="#">20개씩 보기</a></li>
+			<li><a class="dropdown-item" href="javascript:void(0);"
+				data-pageunit="10">10개씩 보기</a></li>
+			<li><a class="dropdown-item" href="javascript:void(0);"
+				data-pageunit="50">50개씩 보기</a></li>
+			<li><a class="dropdown-item" href="javascript:void(0);"
+				data-pageunit="0">전체 보기</a></li>
 		</ul>
 	</div>
 
