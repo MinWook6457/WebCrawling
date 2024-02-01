@@ -29,7 +29,10 @@ public class NewsController {
     @PostMapping("/news/selectNewsList")
     @ResponseBody
     public Page<InfoDto> selectNewsList(@RequestBody InfoDto infoDto) {
-        return newsService.getPagedNews(infoDto.getPage(),infoDto.getPageSize());
+    	// , infoDto.getImageDto().getImageUrl()
+    	System.out.println("현재 페이지 번호 : " + infoDto.getPageNo() + " 현재 페이지 단위 : " + infoDto.getPageUnit());
+    	
+        return newsService.getPagedNews(infoDto.getPageNo(),infoDto.getPageUnit());
     }
 
 //    @GetMapping("/news/selectNewsList")
