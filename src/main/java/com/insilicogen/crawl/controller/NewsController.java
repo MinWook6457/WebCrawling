@@ -35,57 +35,13 @@ public class NewsController {
         return newsService.getPagedNews(infoDto.getPageNo(),infoDto.getPageUnit());
     }
 
-//    @GetMapping("/news/selectNewsList")
-//    @ResponseBody
-//    public Map<String, Object> selectNewsList(Model model,
-//    		@RequestBody InfoDto infoDto,
-//            @RequestParam(defaultValue = "1") int page,
-//            @RequestParam(defaultValue = "10") int pageSize,
-//            @RequestParam(defaultValue = "5") int pageUnit,
-//            @RequestParam(defaultValue = "") String imgUrl) {
-//        System.out.println("Controller method is called!");
-//
-//        Page<InfoDto> pagedNews = newsService.getPagedNews(page, pageSize);
-//        
-//        List<InfoDto> newsList = pagedNews.getContent();
-//        int totalItems = (int) pagedNews.getTotalElements();
-//
-//        Map<String, Object> response = new HashMap<>();
-//        response.put("newsList", newsList);
-//        response.put("totalItems", totalItems);
-//        
-//        // response.put(imgUrl, response);
-//        
-//        System.out.println("page: " + page + ", pageSize: " + pageSize);
-//
-//        return response;
-//    }
-
     @GetMapping("/news/initCrawling")
     public ModelAndView initCrawling(Model model,
     		@RequestParam(defaultValue = "1") int currentPage,
     		@RequestParam(defaultValue = "10") int pageUnit
     		) {
         try {
-            newsService.crawlAndSaveNews();
-//            model.addAttribute("newsList", newsList);
-//            model.addAttribute("imagePath", NewsService.destinationFolder);
-//            
-//            Page<InfoDto> initPagedNews = newsService.getPagedNews(currentPage, pageSize);
-//            List<InfoDto> initNewsList = initPagedNews.getContent();
-//            
-//            int totalItems = (int)initPagedNews.getTotalElements();
-//            
-//            Map<String,Object> response = new HashMap<>();
-//            
-//            response.put("newsList", initNewsList);
-//            response.put("totalItems", totalItems);
-//            response.put("currentPage", currentPage);
-//            response.put("pageSize", pageSize);
-//            
-//            model.addAttribute("initResponse",response);
-//            
-            
+            newsService.crawlAndSaveNews();              
             return new ModelAndView("news", model.asMap());
         } catch (Exception e) {
             e.printStackTrace();

@@ -63,8 +63,9 @@ public class NewsService {
 			e.printStackTrace();
 		}
 	}
+
 	// 크롤링 함수 => 우선 데이터 정보를 객체에 담아두고 DTO에 저장
-	private List<InfoDto> crawlingNewsInInfo(Elements elements,Elements imgElement) {
+	private List<InfoDto> crawlingNewsInInfo(Elements elements, Elements imgElement) {
 		List<InfoDto> newsList = new ArrayList<>();
 		System.out.println("daily 기사 개수 : " + elements.size());
 
@@ -79,8 +80,6 @@ public class NewsService {
 				.text().trim();
 		String upload2 = elements.select("div.sa_text_info > div.sa_text_info_left > div.sa_text_datetime").text()
 				.trim();
-
-		
 
 		if (upload1.contains("분")) {
 			String imageUrl = imgElement.select("a > img").attr("data-src");
@@ -107,6 +106,7 @@ public class NewsService {
 	public List<InfoDto> crawlAndSaveNews() {
 		System.out.println("크롤링 시작!!");
 		List<InfoDto> newsList = new ArrayList<>();
+		truncate(); // 테이블 비우기
 		// news.naver.com/breakingnews/section/105/230?date=20240125
 		try {
 			for (int date = 0; date < 30; date++) {
@@ -123,12 +123,14 @@ public class NewsService {
 
 				List<InfoDto> dailyNewsList = new ArrayList<>(); // 하루의 뉴스를 저장할 리스트 생성
 				for (int i = 1; i <= 6; i++) {
-					String selector = "#newsct > div.section_latest > div > div.section_latest_article._CONTENT_LIST._PERSIST_META > div:nth-child(1) > ul > li:nth-child("+ i + ") > div > div > div.sa_text";
+					String selector = "#newsct > div.section_latest > div > div.section_latest_article._CONTENT_LIST._PERSIST_META > div:nth-child(1) > ul > li:nth-child("
+							+ i + ") > div > div > div.sa_text";
 					String imgSelctor = "#newsct > div.section_latest > div > div.section_latest_article._CONTENT_LIST._PERSIST_META >"
-							+ " div:nth-child(1) > ul > li:nth-child(" + i + ") > div > div > div.sa_thumb._LAZY_LOADING_ERROR_HIDE > div > a";
+							+ " div:nth-child(1) > ul > li:nth-child(" + i
+							+ ") > div > div > div.sa_thumb._LAZY_LOADING_ERROR_HIDE > div > a";
 					Elements elements = doc.select(selector);
 					Elements imgElemnets = doc.select(imgSelctor);
-					dailyNewsList.addAll(crawlingNewsInInfo(elements,imgElemnets));
+					dailyNewsList.addAll(crawlingNewsInInfo(elements, imgElemnets));
 				}
 				// 이미지 다운로드 및 뉴스 저장
 
@@ -167,5 +169,9 @@ public class NewsService {
 		calendar.add(Calendar.DATE, -minusDate);
 
 		return calendar.getTime();
+	}
+
+	public void truncate() {
+		newsRepository.truncateInfoDtoTable();
 	}
 }
