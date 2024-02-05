@@ -16,28 +16,20 @@
 </style>
 
 <script>
-// 	var newsList = [];
-	
-// 	var imageUrl;
-	
 	$(document).ready(function() {
-// 		alert("초기 페이지를 로드합니다.");
 		loadNews(1);
-		
 	
 		$(".dropdown-item").on("click", function() {
 			var selectedPageUnit = $(this).data("pageunit");
 			$("#pageUnit").val(selectedPageUnit);	
 	        
 	        loadNews(1);
-		});
-    
-		
+		});		
 		// 버튼
 		$("#startCrawlingBtn").on("click", function () {
 			alert("최신 뉴스 기사를 크롤링을 진행합니다.");
             initCrawling();
-            
+           
             loadNews(1);
         });
 	});
@@ -46,10 +38,7 @@
 		$.ajax({
 			type : "GET",
 			url : "/crawl/news/initCrawling",
-			success : function(res) {
-// 				newsList = response.initResponse.newsList;
-// 				createPagination(response.ajaxResponse.totalItems);
-				
+			success : function(res) {			
 				loadNews(1);
 			},
 			error : function() {
@@ -104,17 +93,6 @@
 	}
 	
 	/*
-	var param = {
-			page : page,
-			pageSize : pageSize
-			totalPages = res.totalPages;
-			totalElements = res.totalElements;
-		}
-	*/
-	
-	// 페이지네이션 생성 함수
-	
-	/*
 Prev : 이전 페이지 (이전 그룹)
 Next : 다음 페이지 (다음 그룹)
 First : 첫 페이지로
@@ -165,7 +143,7 @@ function createPagination(pages) {
     }
     
     for (var i = firstPageNo; i <= lastPageNo; i++) { 
-        html += "<li class='page-item" + (pageNo == i ? ' active' : '') + "'><a class='page-link' href='" + onclickNm + "(" + i + ")'>" + i + "</a></li>";
+        html += "<li class='page-itemxltmxhfl " + (pageNo == i ? ' active' : '') + "'><a class='page-link' href='" + onclickNm + "(" + i + ")'>" + i + "</a></li>";
     }
     
     if (pageNo < totalPages) { // 다음 버튼
@@ -183,24 +161,6 @@ function createPagination(pages) {
     html += '</ul>';  
     $("#pagination").append(html);
 }
-	
-// Prev 버튼 클릭 이벤트 처리
-// $("#pagination").on("click", "a[data-page='Prev']", function (event) {
-//     event.preventDefault();
-//     if (currentPage > 1) {
-//         currentPage--;
-//         loadNews(currentPage, pageUnit);
-//     }
-// });
-
-// $("#pagination").on("click", "a[data-page='Next']", function (event) {
-//     event.preventDefault();
-//     if (currentGroup < totalPages) {
-//         currentPage++;
-//         loadNews(currentPage, pageUnit);
-//     }
-// });
-
 </script>
 
 

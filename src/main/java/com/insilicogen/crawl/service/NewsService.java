@@ -23,8 +23,6 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.stereotype.Service;
-
-import com.insilicogen.crawl.dto.ImageDto;
 import com.insilicogen.crawl.dto.InfoDto;
 import com.insilicogen.crawl.model.Info;
 import com.insilicogen.crawl.repository.NewsRepository;
@@ -43,27 +41,6 @@ public class NewsService {
 	public NewsService(NewsRepository newsRepository) {
 		this.newsRepository = newsRepository;
 	}
-
-	public void initData() {
-		newsRepository.deleteAllInBatch();
-	}
-
-	// 이미지 다운로드 함수
-	public void downloadImage(String imageUrl, String destinationFolder, InfoDto i) {
-		try {
-			if (!imageUrl.equals("")) {
-				URL url = new URL(imageUrl);
-				try (InputStream in = url.openStream()) {
-					String fileName = i.getId() + ".jpg";
-					Path destinationPath = Paths.get(destinationFolder, fileName);
-					Files.copy(in, destinationPath, StandardCopyOption.REPLACE_EXISTING);
-				}
-			}
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
-	}
-
 	// 크롤링 함수 => 우선 데이터 정보를 객체에 담아두고 DTO에 저장
 	private List<InfoDto> crawlingNewsInInfo(Elements elements, Elements imgElement) {
 		List<InfoDto> newsList = new ArrayList<>();
@@ -123,11 +100,8 @@ public class NewsService {
 
 				List<InfoDto> dailyNewsList = new ArrayList<>(); // 하루의 뉴스를 저장할 리스트 생성
 				for (int i = 1; i <= 6; i++) {
-					String selector = "#newsct > div.section_latest > div > div.section_latest_article._CONTENT_LIST._PERSIST_META > div:nth-child(1) > ul > li:nth-child("
-							+ i + ") > div > div > div.sa_text";
-					String imgSelctor = "#newsct > div.section_latest > div > div.section_latest_article._CONTENT_LIST._PERSIST_META >"
-							+ " div:nth-child(1) > ul > li:nth-child(" + i
-							+ ") > div > div > div.sa_thumb._LAZY_LOADING_ERROR_HIDE > div > a";
+					String selector = "#newsct > div.section_latest > div > div.section_latest_article._CONTENT_LIST._PERSIST_META > div:nth-child(1) > ul > li:nth-child("+ i + ") > div > div > div.sa_text";
+					String imgSelctor = "#newsct > div.section_latest > div > div.section_latest_article._CONTENT_LIST._PERSIST_META >"+ " div:nth-child(1) > ul > li:nth-child(" + i+ ") > div > div > div.sa_thumb._LAZY_LOADING_ERROR_HIDE > div > a";
 					Elements elements = doc.select(selector);
 					Elements imgElemnets = doc.select(imgSelctor);
 					dailyNewsList.addAll(crawlingNewsInInfo(elements, imgElemnets));
@@ -147,17 +121,8 @@ public class NewsService {
 	}
 
 	public Page<InfoDto> getPagedNews(int page, int pageSize) {
-		if (page < 1) {
-			page = 1;
-			pageSize = 10;
-		}
-
 		Pageable pageable = PageRequest.of(page - 1, pageSize);
 		return newsRepository.findPagedNewsList(pageable);
-	}
-
-	public int getTotalNewsCount() {
-		return (int) newsRepository.count();
 	}
 
 	/* 날짜가 주어지면 하루 씩 줄어드는 메소드 작성 */

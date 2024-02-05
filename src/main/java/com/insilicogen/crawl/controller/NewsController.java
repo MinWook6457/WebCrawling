@@ -36,10 +36,7 @@ public class NewsController {
     }
 
     @GetMapping("/news/initCrawling")
-    public ModelAndView initCrawling(Model model,
-    		@RequestParam(defaultValue = "1") int currentPage,
-    		@RequestParam(defaultValue = "10") int pageUnit
-    		) {
+    public ModelAndView initCrawling(Model model) {
         try {
             newsService.crawlAndSaveNews();              
             return new ModelAndView("news", model.asMap());
