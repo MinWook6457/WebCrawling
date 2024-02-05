@@ -9,7 +9,7 @@ public class Info {
 	private String url;
 	
 	public Info() {
-		//
+		// 기본 생성자
 	}
 	
 	public Info(String title,String content,String publisher,String upload,String url) {
