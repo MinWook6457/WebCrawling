@@ -25,7 +25,7 @@
 ![image](https://github.com/MinWook6457/WebCrawling/assets/103114126/9a28ef3f-1bcf-44a9-a159-762be62038c8)
 
 ### 블로그 기록
-[웹 크롤링 기록 - 1](https://minwook6457.tistory.com/21)
-[웹 크롤링 기록 - 2](https://minwook6457.tistory.com/24)
+[웹 크롤링 기록 - 1](https://minwook6457.tistory.com/21) <br>
+[웹 크롤링 기록 - 2](https://minwook6457.tistory.com/24) <br>
 [웹 크롤링 기록 - 마지막](https://minwook6457.tistory.com/25)
 
